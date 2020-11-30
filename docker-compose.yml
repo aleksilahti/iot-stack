@@ -20,6 +20,7 @@ services:
     container_name: telegraf
     links:
       - influxdb
+      - mosquitto
     volumes:
       - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
