@@ -3,9 +3,9 @@
 #include "DHT.h"
 
 // Network information 
-const char* ssid = "Tarkkailuauto"; 
-const char* password = "95alla23";
-const char* mqtt_server = "192.168.1.11";//needs to be changed
+const char* ssid = ""; 
+const char* password = "";
+const char* mqtt_server = "";//Ip address
 
 //Sensor config(pin2, dht11)
 #define DHTPIN 2
