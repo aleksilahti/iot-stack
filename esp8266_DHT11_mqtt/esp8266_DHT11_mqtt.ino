@@ -3,9 +3,9 @@
 #include "DHT.h"
 
 // Network information 
-const char* ssid = ""; 
-const char* password = "";
-const char* mqtt_server = "";//Ip address
+const char* ssid = "Tarkkailuauto"; 
+const char* password = "95alla23";
+const char* mqtt_server = "192.168.1.8";
 
 //Sensor config(pin2, dht11)
 #define DHTPIN 2
@@ -13,14 +13,15 @@ const char* mqtt_server = "";//Ip address
 DHT dht(DHTPIN, DHTTYPE);
 const char* sensor_id = "1234567890";
 float temp;
-float humidity;
+float humid;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// Char variable for holding mqtt messages
+// Char variables for holding mqtt messages
 #define MSG_BUFFER_SIZE  (100)
-char msg[MSG_BUFFER_SIZE];
+char temp_msg[MSG_BUFFER_SIZE];
+char hum_msg[MSG_BUFFER_SIZE];
 
 // Connecting to the WIFI network
 void setup_wifi() {
@@ -90,15 +91,21 @@ void loop() {
 
   // Get the current object temperature and hmidity of the sensor
   temp = dht.readTemperature();
-  humidity = dht.readHumidity();
+  humid = dht.readHumidity();
+  
+  // Create the temperature message that will be send using mqtt
+  String temperature = String("sensor1,location=bedroom temperature="+String(temp));
+  temperature.toCharArray(temp_msg, temperature.length());
+  Serial.println(temp_msg);
 
-  // Create the message that will be send using mqtt
-  String message = String("id="+String(sensor_id)+",location=bedroom,temperature="+String(temp)+",humidity="+String(humidity));
-  message.toCharArray(msg, message.length());
-  Serial.println(msg);
+  // Create the humidity message that will be send using mqtt
+  String humidity = String("sensor1,location=bedroom humidity="+String(humid));
+  humidity.toCharArray(hum_msg, humidity.length());
+  Serial.println(hum_msg);
 
-  // Send the message on the sensors topic
-  client.publish("sensors", msg);
+  // Send the messages to the sensors topic
+  client.publish("sensors", temp_msg);
+  client.publish("sensors", hum_msg);
 
   delay(5000); 
 }
